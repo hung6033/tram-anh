@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gửi em nè!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Dancing+Script&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', sans-serif;
+      background-color: #fff0f5;
+      text-align: center;
+      color: #a21d33;
+      overflow-x: hidden;
+    }
+
+    .container {
+      padding: 40px 20px;
+    }
+
+    .button {
+      background-color: #ff007f;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1.2em;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: 0.3s;
+    }
+
+    .button:hover {
+      background-color: #e6006f;
+    }
+
+    .image-container img {
+      max-width: 300px;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: #fff0f5;
+      padding: 30px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 450px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    input[type="date"],
+    input[type="time"],
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .signature {
+      font-family: 'Dancing Script', cursive;
+      font-size: 20px;
+      margin-top: 40px;
+    }
+
+    #question {
+      display: none;
+    }
+
+    /* Định dạng cho text box */
+    .text-box {
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      width: 80%;
+      max-width: 600px;
+      margin: 0 auto;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      font-size: 21px;
+      text-align: left;
+      position: relative;
+      top: 1cm;
+      font-family: 'Dancing Script', cursive;
+      display: none;
+      white-space: pre-line;  /* Giữ nguyên khoảng cách dòng */
+    }
+
+    .intro {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+
+    .message {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="intro">
+    <h2>Sắp được nghỉ lễ 30/4 rồi í nên là...</h2>
+    <p>Không biết tụi mình có thể hẹn nhau một buổi đi chơi khônggg 🥰</p>
+    <div class="image-container">
+      <img src="https://i.imgur.com/xPKj6zk.png" alt="Flowers"/>
+    </div>
+    <button class="button" onclick="nextStep()">Tiếp tục</button>
+  </div>
+
+  <div class="container" id="question">
+    <h2>Vậy tụi mình cùng lên kế hoạch cho ngày hôm đó nhé 💌</h2>
+    <button class="button" onclick="showModal()">Dạaa</button>
+  </div>
+
+  <!-- Modal chọn ngày + hoạt động + thời gian + lời nhắn -->
+  <div class="modal" id="myModal">
+    <div class="modal-content">
+      <h2>Mình đi date nha ❤️</h2>
+      <label for="date">Chọn ngày:</label>
+      <input type="date" id="date">
+
+      <label for="activities">Hôm đó em muốn làm gì? (tụi mình có thể đi ăn, đi chơi, đi coi phim,...):</label>
+      <textarea id="activities" rows="4" placeholder="Mô tả hoạt động em muốn làm?"></textarea>
+
+      <label for="time">Vậy cậu muốn đi chơi lúc mấy giờ :> :</label>
+      <input type="time" id="time" name="time">
+
+      <label for="note">Viết gì đó thêm nè (tùy em 🥺):</label>
+      <textarea id="note" rows="4" placeholder="Em muốn nói điều gì với anh hông?"></textarea>
+
+      <button class="button" onclick="sendDate()">Gửi cho anh</button>
+    </div>
+  </div>
+
+  <!-- Text box hiển thị bức thư -->
+  <div id="letter-container" class="text-box"></div>
+
+ <script>
+  function nextStep() {
+    document.getElementById("intro").style.display = "none";
+    document.getElementById("question").style.display = "block";
+  }
+
+  function showModal() {
+    document.getElementById("myModal").style.display = "flex";
+  }
+
+  function sendDate() {
+    const selectedDate = document.getElementById("date").value;
+    const selectedTime = document.getElementById("time").value;
+    const activities = document.getElementById("activities").value.trim();
+    const note = document.getElementById("note").value.trim();
+
+    // Kiểm tra xem đã chọn ngày, giờ và hoạt động chưa
+    if (!selectedDate || !selectedTime || !activities) {
+      alert("Em nhớ chọn ngày, giờ và mô tả hoạt động nha!");
+      return;
+    }
+
+    // Tạo bức thư với nội dung dynamic
+    let letterContent = `Dear tieu thu Tram Anh, 
+
+Cảm ơn em đã đồng ý đi chơi với anh! 
+Sau đây anh xin gửi thông tin về lịch hẹn ngày hôm nay của chúng ta nhé!
+- Nội dung cuộc hẹn: Phỏng vấn ứng tuyển vị trí người đưa em đi chơi khi em chán. 
+- Thời gian: ${selectedTime} vào ngày ${selectedDate}
+- Địa điểm: Đâu đó quanh Hải Phòng
+- Trang phục: Gì cũng được vì em mặc gì cũng xinh.
+- Thời gian anh đón: Bất cứ khi nào em sẵn sàng.
+
+Em vui phản hồi lại địa điểm anh có thể đón em để xác nhận lịch hẹn. Cảm ơn em!
+Regards,
+-Your sweetie pookie dookie-`;
+
+    // Thay thế các ký tự xuống dòng thành <br> và giữ nguyên các khoảng trắng
+    letterContent = letterContent.replace(/\n/g, '<br>');
+
+    // Ẩn tất cả nội dung hiện tại trên màn hình
+    document.getElementById("intro").style.display = "none";
+    document.getElementById("question").style.display = "none";
+    document.getElementById("myModal").style.display = "none";
+
+    // Hiển thị bức thư trong text box
+    const letterContainer = document.getElementById('letter-container');
+    letterContainer.style.display = "block"; // Hiển thị text box
+    letterContainer.innerHTML = letterContent; // Chèn nội dung thư với định dạng xuống dòng
+
+    // Gửi thông tin đến Telegram Bot
+    sendToTelegram(selectedDate, selectedTime, activities, note);
+  }
+
+  function sendToTelegram(date, time, activities, note) {
+    const botToken = "8163597572:AAEg8CPGrEhil5I6oVrTu-rDEz8MKha0EYw";  // Thay thế bằng token bot thật
+    const chatId = "7402107166";  // Thay thế bằng chat ID thật
+
+    // Tạo nội dung tin nhắn
+    const message = `
+Lịch hẹn mới:
+
+- Ngày: ${date}
+- Thời gian: ${time}
+- Hoạt động: ${activities}
+- Lời nhắn: ${note}
+    `;
+
+    // Tạo URL API Telegram
+    const apiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+    // Gửi yêu cầu đến API Telegram để gửi tin nhắn
+    fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message,
+      }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.ok) {
+        console.log("Thông tin đã được gửi đến bot Telegram thành công.");
+      } else {
+        console.error("Có lỗi xảy ra khi gửi tin nhắn:", data);
+      }
+    })
+    .catch(error => {
+      console.error("Lỗi khi gửi tin nhắn đến Telegram:", error);
+    });
+  }
+</script>
+
